@@ -2,6 +2,8 @@ use std::io::{self, BufReader};
 use std::fs::File;
 use std::path::Path;
 
+use crate::records::StringRecordIter;
+
 #[derive(Debug, Copy, Clone)]
 pub struct ContextReader {
     delimiter: u8,
@@ -23,16 +25,19 @@ impl ContextReader {
     }
 }
 #[derive(Debug)]
-pub struct Reader<R> {
+pub struct Reader<T> {
     context: ContextReader,
     line: u64,
-    data: BufReader<R>
+    pub buf: BufReader<T>
 }
 
-impl<R: io::Read> Reader<R> {
-    pub fn new(context: &ContextReader, read_data: R) -> Reader<R> {
-        Reader {context: *context, line:0, data: BufReader::new(read_data)}
-        //TODO: Clone ContextReader to avoid bad ownership
+impl<T: std::io::Read> Reader<T> {
+    pub fn new(context: &ContextReader, read_data: T) -> Reader<T> {
+        Reader {context: context.clone(), line:0, buf: BufReader::new(read_data)}
+    }
+
+    pub fn lines(&mut self) -> StringRecordIter<T> {
+        StringRecordIter::new(self)
     }
 }
 
