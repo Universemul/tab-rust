@@ -19,11 +19,22 @@ impl ContextReader {
         self.delimiter = delimiter;
         self
     }
+
+    pub fn set_headers(&mut self, value: bool) -> &mut ContextReader {
+        self.has_headers = value;
+        self
+    }
     
     pub fn from_path<P: AsRef<Path>>(&self, path: P) -> Result<Reader<File>, io::Error> {
         Ok(Reader::new(self, File::open(path)?))
     }
+
+    pub fn from_string<R: io::Read>(&self, content: R) -> Result<Reader<R>, io::Error> {
+        Ok(Reader::new(self, content))
+    }
 }
+
+
 #[derive(Debug)]
 pub struct Reader<T> {
     context: ContextReader,
