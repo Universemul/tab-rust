@@ -2,10 +2,13 @@
 
 mod reader;
 mod records;
+mod error;
 
 fn main() {
     //let mut rdr = reader::ContextReader::new().set_delimiter(b';').from_path("test.csv").unwrap();
-    let mut rdr = reader::ContextReader::new().set_delimiter(b';').from_string("a,b,c,d\ne,f,g,h\n".as_bytes()).unwrap();
+    let mut rdr = reader::ContextReader::new().set_delimiter(';').set_headers(true).from_read("a,b,c,d\ne,f,g,h\n".as_bytes()).unwrap();
+    let headers = rdr.headers().unwrap();
+    println!("{:?}", headers);
     for line in rdr.lines()  {
         println!("{:?}", line);
     }
@@ -18,9 +21,7 @@ TODO App:
 
 
 TODO Reader: 
- - Add from_string method
- - Add endline delimiter
- - Parse file with headers
+ - Parse headers
  - Parse row with deserialization
  - Parse row on HashMap (by default)
  - Load file in data structure for filtering
