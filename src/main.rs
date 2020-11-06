@@ -2,17 +2,39 @@
 
 mod reader;
 mod records;
+mod utils;
 mod error;
 
+use crate::reader::ToCsv;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+struct Record {
+    city: String,
+    region: String,
+    country: String,
+    population: String,
+}
+
+fn dump(arr: &[i32]) {
+    println!("arr is {:?}", arr);
+}
+
 fn main() {
-    //let mut rdr = reader::ContextReader::new().set_delimiter(b';').from_path("test.csv").unwrap();
-    let mut rdr = reader::ContextReader::new().set_delimiter(';').set_headers(true).from_read("a,b,c,d\ne,f,g,h\n".as_bytes()).unwrap();
-    let headers = rdr.headers().unwrap();
-    println!("{:?}", headers);
-    for line in rdr.lines()  {
-        println!("{:?}", line);
+    //let mut rdr = reader::CsvReader::from().set_delimiter(',');
+    let mut rdr = std::fs::File::open("test.csv").unwrap().parse_csv(';', true);
+    println!("{:?}", rdr.headers().unwrap());
+    //for line in rdr.lines()  {
+    //    println!("{:?}", line);
+    //}
+    //println!("{}", rdr.current_position())
+    let arr = [10, 20, 30];
+    for i in arr.iter() {
+        println!("{}", i);
     }
 }
+
+
 
 /*
 TODO App:
